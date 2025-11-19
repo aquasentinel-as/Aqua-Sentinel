@@ -16,13 +16,13 @@
             <img src="assets/logo/logo (1).png" alt="Aqua Sentinal Logo" class="logo">
             <span class="brand-name">Aqua Sentinel</span>
         </a>
-        <div class="hamburger" >
+        <div class="hamburger" onclick="toggleMenu()">
             ☰
         </div>
         <div class="nav-links" id="nav-links">
             <a href="index.html">Home</a>
             <a href="dashboard.html">Live Dashboard</a>
-            <a href="history.html" >Historical Data</a>
+            <a href="history.html">Historical Data</a>
             <a href="parameters.html">Parameters</a>
             <a href="technology.html">Technology</a>
             <a href="sustainability.html">Sustainability</a>
@@ -92,19 +92,19 @@
             <div class="team-member special" data-role="IoT & Hardware Specialist">
                 <h3>Akshat Joshi</h3>
                 <p class="role">Firmware Developer & System Integrator</p>
-                <a href="https://www.linkedin.com/in/akshat-joshi-46896537a/"><img 
+                <a href="https://www.linkedin.com/in/akshat-joshi-46896537a/"><img
                         src="https://img.icons8.com/color/48/linkedin.png" alt="profile" class="linkedin"></a>
             </div>
             <div class="team-member special" data-role="Data & Analytics Engineer">
                 <h3>Shiven Aneja</h3>
-                <p class="role">Data Analyst & Integration Specialist</p> 
-                <a href="https://www.linkedin.com/in/shiven-aneja-4644ba37a/"><img 
+                <p class="role">Data Analyst & Integration Specialist</p>
+                <a href="https://www.linkedin.com/in/shiven-aneja-4644ba37a/"><img
                         src="https://img.icons8.com/color/48/linkedin.png" alt="profile" class="linkedin"></a>
             </div>
             <div class="team-member" data-role="Core Development Member">
                 <h3>Pratham Khatter</h3>
                 <p class="role">Core Development Member</p>
-                <a href="https://www.linkedin.com/in/pratham-khatter-05a650294/"><img 
+                <a href="https://www.linkedin.com/in/pratham-khatter-05a650294/"><img
                         src="https://img.icons8.com/color/48/linkedin.png" alt="profile" class="linkedin"></a>
             </div>
             <div class="team-member" data-role="Core Member">
@@ -150,6 +150,15 @@
         </div>
     </footer>
     <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+    </script>
 </body>
 
 </html>
