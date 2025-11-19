@@ -306,12 +306,16 @@ body {
   transition: all 0.8s ease;
 }
 
+/* REPLACE THIS ENTIRE FOOTER SECTION IN YOUR style.css */
+
 footer {
   background: linear-gradient(180deg, #0077b6 0%, #023e8a 100%);
   color: #ffffff;
-  padding: 20px 50px 25px;
+  padding: 40px 50px 25px;
   border-top: 4px solid #00b4d8;
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .footer-container {
@@ -322,7 +326,12 @@ footer {
   justify-items: center;
   text-align: center;
   margin-bottom: 25px;
-  height: 260px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: auto;
+  /* CHANGED FROM 260px to auto */
 }
 
 .footer-left {
@@ -332,7 +341,7 @@ footer {
 .footer-logo {
   width: 170px;
   height: 130px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
 }
 
@@ -340,14 +349,16 @@ footer {
   font-size: 1.6rem;
   color: #ffffff;
   font-weight: 700;
-  line-height: 5px;
+  line-height: 1.3;
   text-align: center;
+  margin: 10px 0 5px 0;
 }
 
 .footer-left p {
   font-size: 0.95rem;
   line-height: 1.6;
   opacity: 0.9;
+  margin: 0;
 }
 
 .footer-middle h4,
@@ -357,17 +368,20 @@ footer {
   letter-spacing: 1px;
   margin-bottom: 10px;
   font-weight: 700;
-  height: 30px;
+  height: auto;
+  /* CHANGED FROM 30px to auto */
+  margin-top: 0;
 }
 
 .footer-middle ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .footer-middle li {
-  margin: 0;
-
+  margin: 5px 0;
+  /* Added spacing */
 }
 
 .footer-middle a {
@@ -375,7 +389,8 @@ footer {
   text-decoration: underline;
   opacity: 0.8;
   transition: all 0.3s ease;
-  line-height: 30px;
+  line-height: 1.8;
+  display: inline-block;
 }
 
 .footer-middle a:hover {
@@ -387,11 +402,14 @@ footer {
   font-size: 0.95rem;
   line-height: 1.7;
   opacity: 0.9;
-  height: 65px;
+  height: auto;
+  /* CHANGED FROM 65px to auto */
+  margin: 8px 0;
 }
 
 .footer-right h4 {
-  height: 50px;
+  height: auto;
+  /* CHANGED FROM 50px to auto */
 }
 
 .footer-right a {
@@ -410,10 +428,60 @@ footer {
   padding-top: 15px;
   font-size: 0.9rem;
   opacity: 0.9;
+  margin-top: 15px;
 }
 
 .footer-bottom strong {
   color: #90e0ef;
+}
+
+/* Mobile Footer Fix */
+@media (max-width: 768px) {
+  footer {
+    padding: 30px 15px 20px !important;
+  }
+
+  .footer-container {
+    gap: 25px !important;
+    height: auto !important;
+    margin-bottom: 15px !important;
+  }
+
+  .footer-left,
+  .footer-middle,
+  .footer-right {
+    width: 100% !important;
+  }
+
+  .footer-logo {
+    width: 120px !important;
+    height: 100px !important;
+  }
+
+  .footer-left h3 {
+    font-size: 1.3rem !important;
+    margin: 10px 0 5px 0 !important;
+  }
+
+  .footer-left p {
+    font-size: 0.85rem !important;
+  }
+
+  .footer-middle h4,
+  .footer-right h4 {
+    margin-bottom: 8px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .footer-middle a,
+  .footer-right p {
+    font-size: 0.85rem !important;
+  }
+
+  .footer-bottom {
+    font-size: 0.8rem !important;
+    padding-top: 10px !important;
+  }
 }
 
 .dashboard-header {
@@ -2083,12 +2151,14 @@ table tbody tr:hover {
     background: #0077b6 !important;
     color: white !important;
     width: 100% !important;
-  } 
+  }
+
   .info-box {
     font-size: 0.85rem !important;
     padding: 12px 15px !important;
     margin-bottom: 1.5rem !important;
   }
+
   .table-container {
     background: white !important;
     border: 1px solid #e0e0e0 !important;
@@ -2157,12 +2227,14 @@ table tbody tr:hover {
     border: 4px solid rgba(0, 119, 182, 0.3) !important;
     border-top-color: #0077b6 !important;
   }
+
   .no-data {
     text-align: center !important;
     padding: 2rem 1rem !important;
     color: #666 !important;
     font-size: 0.95rem !important;
   }
+
   .export-btn {
     background: #0077b6 !important;
     color: white !important;
@@ -2174,6 +2246,7 @@ table tbody tr:hover {
   .export-btn:active {
     background: #005fcc !important;
   }
+
   .message {
     padding: 12px 15px !important;
     font-size: 0.9rem !important;
@@ -2222,6 +2295,7 @@ table tbody tr:hover {
     margin: 10px auto !important;
   }
 }
+
 /* ===== CRITICAL HAMBURGER MENU FIXES ===== */
 /* PASTE THIS AT THE VERY BOTTOM OF YOUR style.css */
 
