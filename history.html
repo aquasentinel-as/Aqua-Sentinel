@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aqua Sentinel | Historical Data</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            <img src="assets/logo/logo (1).png" alt="Aqua Sentinal Logo" class="logo">
+            <span class="brand-name">Aqua Sentinel</span>
+        </a>
+        <div class="hamburger" onclick="toggleMenu()">
+            ☰
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Live Dashboard</a>
+            <a href="history.html" class="active">Historical Data</a>
+            <a href="parameters.html">Parameters</a>
+            <a href="technology.html">Technology</a>
+            <a href="sustainability.html">Sustainability</a>
+            <a href="awareness.html">Awareness</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="history-container">
+        <div class="history-header">
+            <h1>📊 Historical Water Quality Data</h1>
+            <p>View and analyze past readings from your monitoring system</p>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="info-box">
+            ℹ️ This page shows data saved from your live dashboard. Make sure your dashboard is running to collect data!
+        </div>
+
+        <div class="filters">
+            <input type="date" id="startDate" placeholder="Start Date">
+            <span class="date-separator">to</span>
+            <input type="date" id="endDate" placeholder="End Date">
+            <button onclick="searchLocalData()" class="search-btn">🔍 Search Local Data</button>
+            <button class="export-btn" onclick="exportToCSV()">📥 Export CSV</button>
+        </div>
+
+        <div id="loadingSpinner" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading data...</p>
+        </div>
+
+        <div class="table-container">
+            <table id="dataTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>pH</th>
+                        <th>TDS (ppm)</th>
+                        <th>Turbidity (NTU)</th>
+                        <th>Temperature (°C)</th>
+                        <th>DO (mg/L)</th>
+                        <th>Heavy Metals (ppm)</th>
+                    </tr>
+                </thead>
+                <tbody id="dataBody">
+                </tbody>
+            </table>
+            <div id="noDataMsg" class="no-data" style="display: none;">
+                📭 No data found. Run your dashboard to collect readings!
+            </div>
+        </div>
+    </div>
+
+    <footer class="oooter">
+        <p>© 2025 Aqua Sentinel | Built by Innovators of Thapar Institute</p>
+    </footer>
+
+    <script>
+        let allHistoricalData = [];
+
+        // Toggle menu function
+        function toggleMenu() {
+            const navlinks = document.getElementById("navlinks");
+            if (navlinks) {
+                navlinks.classList.toggle("active");
+            }
+        }
+
+        // Close menu when link is clicked
+        document.addEventListener("DOMContentLoaded", () => {
+            const navlinks = document.getElementById("navlinks");
+            if (navlinks) {
+                navlinks.querySelectorAll("a").forEach(link => {
+                    link.addEventListener("click", () => {
+                        navlinks.classList.remove("active");
+                    });
+                });
+            }
+        });
+
+        // Show message
+        function showMessage(text, type = 'success-msg') {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = `message show ${type}`;
+            setTimeout(() => {
+                msgEl.classList.remove('show');
+            }, 5000);
+        }
+
+        function setDefaultDates() {
+            const end = new Date();
+            const start = new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            document.getElementById('startDate').valueAsDate = start;
+            document.getElementById('endDate').valueAsDate = end;
+        }
+
+        function formatReading(value, param) {
+            if (value === undefined || value === null) {
+                return { text: '-', class: 'status-good' };
+            }
+
+            const good = {
+                ph: [6.5, 8.5],
+                tds: [0, 500],
+                turbidity: [0, 5],
+                temp: [20, 30],
+                do: [5, 14],
+                metal: [0, 0.01]
+            };
+            const warn = {
+                ph: [6.0, 9.0],
+                tds: [0, 800],
+                turbidity: [0, 7],
+                temp: [0, 50],
+                do: [4, 14],
+                metal: [0, 0.1]
+            };
+
+            const range = good[param];
+            const warnRange = warn[param];
+
+            if (value >= range[0] && value <= range[1]) {
+                return { text: value.toFixed(2), class: 'status-good' };
+            }
+            if (value >= warnRange[0] && value <= warnRange[1]) {
+                return { text: value.toFixed(2), class: 'status-warning' };
+            }
+            return { text: value.toFixed(2), class: 'status-danger' };
+        }
+
+        function searchLocalData() {
+            const startDateEl = document.getElementById('startDate');
+            const endDateEl = document.getElementById('endDate');
+
+            if (!startDateEl.value || !endDateEl.value) {
+                showMessage('❌ Please select both dates', 'error-msg');
+                return;
+            }
+
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('dataTable').style.display = 'none';
+            document.getElementById('noDataMsg').style.display = 'none';
+
+            setTimeout(() => {
+                try {
+                    const startDate = new Date(startDateEl.value);
+                    const endDate = new Date(endDateEl.value);
+                    endDate.setHours(23, 59, 59);
+
+                    const startDateStr = startDateEl.value;
+                    const endDateStr = endDateEl.value;
+
+                    const storedHistory = localStorage.getItem('aquaReadingsHistory');
+
+                    if (storedHistory) {
+                        const allReadings = JSON.parse(storedHistory);
+
+                        allHistoricalData = allReadings.filter(reading => {
+                            return reading.date >= startDateStr && reading.date <= endDateStr;
+                        });
+
+                        if (allHistoricalData.length > 0) {
+                            showMessage(`✅ Found ${allHistoricalData.length} reading(s)`, 'success-msg');
+                        } else {
+                            allHistoricalData = [];
+                            showMessage('📭 No data for selected dates. Keep dashboard running!', 'error-msg');
+                        }
+                    } else {
+                        allHistoricalData = [];
+                        showMessage('📭 No history yet. Run dashboard for at least 30 seconds!', 'error-msg');
+                    }
+
+                    displayData();
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('❌ Error loading data', 'error-msg');
+                } finally {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                }
+            }, 500);
+        }
+
+        function displayData() {
+            const tbody = document.getElementById('dataBody');
+            const table = document.getElementById('dataTable');
+            const noDataMsg = document.getElementById('noDataMsg');
+
+            tbody.innerHTML = '';
+
+            if (allHistoricalData.length === 0) {
+                table.style.display = 'none';
+                noDataMsg.style.display = 'block';
+                return;
+            }
+
+            allHistoricalData.forEach(reading => {
+                const row = document.createElement('tr');
+                const dateTime = `${reading.date} ${reading.time}`;
+
+                const ph = formatReading(reading.ph, 'ph');
+                const tds = formatReading(reading.tds, 'tds');
+                const turbidity = formatReading(reading.turbidity, 'turbidity');
+                const temp = formatReading(reading.temp, 'temp');
+                const do_ = formatReading(reading.do, 'do');
+                const metal = formatReading(reading.metal, 'metal');
+
+                row.innerHTML = `
+                    <td>${dateTime}</td>
+                    <td class="${ph.class}">${ph.text}</td>
+                    <td class="${tds.class}">${tds.text}</td>
+                    <td class="${turbidity.class}">${turbidity.text}</td>
+                    <td class="${temp.class}">${temp.text}</td>
+                    <td class="${do_.class}">${do_.text}</td>
+                    <td class="${metal.class}">${metal.text}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            table.style.display = 'table';
+            noDataMsg.style.display = 'none';
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            if (allHistoricalData.length === 0) {
+                showMessage('❌ No data to export. Search first.', 'error-msg');
+                return;
+            }
+
+            try {
+                const headers = ['Date', 'Time', 'pH', 'TDS (ppm)', 'Turbidity (NTU)', 'Temperature (°C)', 'DO (mg/L)', 'Heavy Metals (ppm)'];
+                const rows = allHistoricalData.map(r => [
+                    r.date,
+                    r.time,
+                    r.ph !== undefined ? r.ph.toFixed(2) : '-',
+                    r.tds !== undefined ? r.tds.toFixed(0) : '-',
+                    r.turbidity !== undefined ? r.turbidity.toFixed(2) : '-',
+                    r.temp !== undefined ? r.temp.toFixed(1) : '-',
+                    r.do !== undefined ? r.do.toFixed(2) : '-',
+                    r.metal !== undefined ? r.metal.toFixed(3) : '-'
+                ]);
+
+                const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+
+                link.setAttribute('href', url);
+                link.setAttribute('download', `aqua-sentinel-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showMessage('✅ CSV exported successfully', 'success-msg');
+            } catch (error) {
+                console.error('Export error:', error);
+                showMessage('❌ Error exporting CSV', 'error-msg');
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            setDefaultDates();
+            console.log('✅ History page ready');
+            showMessage('✅ Ready! Make sure your dashboard is running.', 'success-msg');
+        });
+    </script>
+</body>
+
+</html>
