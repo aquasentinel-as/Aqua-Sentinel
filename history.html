@@ -85,7 +85,7 @@
 
         // Toggle menu function
         function toggleMenu() {
-            const navlinks = document.getElementById("navlinks");
+            const navlinks = document.getElementById("nav-links");
             if (navlinks) {
                 navlinks.classList.toggle("active");
             }
@@ -93,7 +93,7 @@
 
         // Close menu when link is clicked
         document.addEventListener("DOMContentLoaded", () => {
-            const navlinks = document.getElementById("navlinks");
+            const navlinks = document.getElementById("nav-links");
             if (navlinks) {
                 navlinks.querySelectorAll("a").forEach(link => {
                     link.addEventListener("click", () => {
@@ -295,3 +295,4 @@
 </body>
 
 </html>
+
